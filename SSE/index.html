@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+    <style>
+        iframe {
+            display: inline-block;
+            width: 200px;
+            height: 100px;
+            margin: 3px;
+        }
+        div.op { padding: 6px; }
+    </style>
+</head>
+
+<body>
+    <div class="op">
+        1 <button type="button" onclick="toggle(this, 1)">ON</button>
+        / 2
+        <button type="button" onclick="toggle(this, 2)">ON</button>
+        / 3
+        <button type="button" onclick="toggle(this, 3)">ON</button>
+        / 4
+        <button type="button" onclick="toggle(this, 4)">ON</button>
+    </div>
+    <div class="op">
+        <input type="text" id=msg />
+        <button type="button" onclick="broadcast()">Broadcast</button>
+    </div>
+    <div>
+        <iframe id=f1></iframe>
+        <iframe id=f2></iframe>
+        <br />
+        <iframe id=f3></iframe>
+        <iframe id=f4></iframe>
+    </div>
+    <iframe id=call style="display:none"></iframe>
+    <script>
+        function toggle(btn, i) {
+            var on = btn.innerText == 'ON';
+            document.getElementById('f' + i).src = on ? 'client.html' : 'about:blank';
+            btn.innerText = on ? 'OFF' : 'ON';
+        }
+        function broadcast() {
+            document.getElementById('call').src = 'sse-service.aspx?m=broadcast&t=' +
+                encodeURIComponent(document.getElementById('msg').value) + '&_=' + Math.random();
+        }
+    </script>
+</body>
+
+</html>

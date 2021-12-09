@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+    <style>
+        html, body { font-size: 9pt; }
+        #dura { position: absolute; top: 2px; right: 2px; opacity: 0.5; }
+    </style>
+</head>
+
+<body>
+    <div id="stat"></div><div id="dura"></div>
+    <ul id="msgs"></ul>
+    <script>
+        const sseKey = Math.random().toString().substr(2, 4);
+        var evtSource;
+        var dura = 0;
+        function updateDura() {
+            document.getElementById('dura').innerText = (dura++) + "s";
+        }
+        setInterval(updateDura, 1000);
+        var debounce;
+        function connect() {
+            dura = 0;
+            updateDura();
+            evtSource = new EventSource('sse-service.aspx?k=' + sseKey);
+            evtSource.onmessage = function (e) {
+                const li = document.createElement('li');
+                li.innerText = e.data;
+                document.getElementById('msgs').prepend(li);
+            }
+            evtSource.addEventListener('stat', function (e) {
+                clearTimeout(debounce);
+                debounce = setTimeout(function() {
+                    document.getElementById('stat').innerText = e.data;
+                }, 200);
+            });
+            evtSource.onerror = function (err) {
+                evtSource.close();
+                connect();
+            }
+        }
+        connect();
+    </script>
+</body>
+
+</html>
